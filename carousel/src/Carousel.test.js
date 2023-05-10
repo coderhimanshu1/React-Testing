@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, getByTestId } from "@testing-library/react";
 import Carousel from "./Carousel";
 
 it("renders without crashing", () => {
@@ -53,4 +53,28 @@ it("works when you click on the right arrow", function () {
   expect(
     queryByAltText("Photo by Pratik Patel on Unsplash")
   ).toBeInTheDocument();
+});
+
+it("left or right arrow hides appropriately", () => {
+  const { getByTestId } = render(<Carousel />);
+  const leftArrow = getByTestId("left-arrow");
+  const rightArrow = getByTestId("right-arrow");
+
+  // Left arrow hides on first image
+  expect(leftArrow).toHaveClass("hidden");
+  expect(rightArrow).not.toHaveClass("hidden");
+
+  // Move forward
+  fireEvent.click(rightArrow);
+
+  // Shows both arrows
+  expect(leftArrow).not.toHaveClass("hidden");
+  expect(rightArrow).not.toHaveClass("hidden");
+
+  // Move forward to last(3rd) image
+  fireEvent.click(rightArrow);
+
+  // Right arrow hides on last image
+  expect(leftArrow).not.toHaveClass("hidden");
+  expect(rightArrow).toHaveClass("hidden");
 });
